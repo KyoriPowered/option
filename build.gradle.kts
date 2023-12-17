@@ -56,6 +56,7 @@ indra {
   signWithKeyFromPrefixedProperties("kyori")
   configurePublications {
     pom {
+      url = "https://feature-flag.kyori.net"
       developers {
         developer {
           id = "kashike"
