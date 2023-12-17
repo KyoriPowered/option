@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>Keys must be unique among all feature flag instances.</p>
  *
  * @param <V> the value type
- * @since 4.15.0
+ * @since 1.0.0
  */
 @ApiStatus.NonExtendable
 public interface FeatureFlag<V> {
@@ -46,7 +46,7 @@ public interface FeatureFlag<V> {
    * @param id the flag id
    * @param defaultValue the default value
    * @return the flag instance
-   * @since 4.15.0
+   * @since 1.0.0
    */
   static FeatureFlag<Boolean> booleanFlag(final String id, final boolean defaultValue) {
     return FeatureFlagImpl.flag(id, Boolean.class, defaultValue);
@@ -62,7 +62,7 @@ public interface FeatureFlag<V> {
    * @param defaultValue the default value
    * @param <E> the enum type
    * @return the flag instance
-   * @since 4.15.0
+   * @since 1.0.0
    */
   static <E extends Enum<E>> FeatureFlag<E> enumFlag(final String id, final Class<E> enumClazz, final E defaultValue) {
     return FeatureFlagImpl.flag(id, enumClazz, defaultValue);
@@ -74,7 +74,7 @@ public interface FeatureFlag<V> {
    * <p>This must be unique among feature flags.</p>
    *
    * @return the flag id
-   * @since 4.15.0
+   * @since 1.0.0
    */
   @NotNull String id();
 
@@ -82,7 +82,7 @@ public interface FeatureFlag<V> {
    * Get the type of the flag value.
    *
    * @return the value type
-   * @since 4.15.0
+   * @since 1.0.0
    */
   @NotNull Class<V> type();
 
@@ -90,7 +90,7 @@ public interface FeatureFlag<V> {
    * Get a default value for the flag, if any is present.
    *
    * @return the default value
-   * @since 4.15.0
+   * @since 1.0.0
    */
   @Nullable V defaultValue();
 }

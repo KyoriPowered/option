@@ -115,7 +115,7 @@ public interface FeatureFlagConfig {
   /**
    * A builder for feature flag sets.
    *
-   * @since 4.15.0
+   * @since 1.0.0
    */
   @ApiStatus.NonExtendable
   interface Builder {
