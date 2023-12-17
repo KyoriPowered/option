@@ -49,6 +49,7 @@ indra {
   checkstyle(libs.versions.checkstyle.get())
 
   javaVersions {
+    minimumToolchain(17)
     testWith(11, 17, 21)
   }
 
