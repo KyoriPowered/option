@@ -1,5 +1,5 @@
 /*
- * This file is part of feature-flag, licensed under the MIT License.
+ * This file is part of option, licensed under the MIT License.
  *
  * Copyright (c) 2023 KyoriPowered
  *
@@ -21,19 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.featureflag;
+package net.kyori.option;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FeatureFlagTest {
+public class OptionTest {
   @Test
   void testMultipleOfKeysFails() {
     final String id = "test_flag";
 
-    assertDoesNotThrow(() -> FeatureFlag.booleanFlag(id, false));
-    assertThrows(IllegalStateException.class, () -> FeatureFlag.booleanFlag(id, false));
+    assertDoesNotThrow(() -> Option.booleanOption(id, false));
+    assertThrows(IllegalStateException.class, () -> Option.booleanOption(id, false));
   }
 }

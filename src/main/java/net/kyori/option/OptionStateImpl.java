@@ -1,5 +1,5 @@
 /*
- * This file is part of feature-flag, licensed under the MIT License.
+ * This file is part of option, licensed under the MIT License.
  *
  * Copyright (c) 2023 KyoriPowered
  *
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.featureflag;
+package net.kyori.option;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -35,30 +35,30 @@ import org.jetbrains.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
-final class FeatureFlagConfigImpl implements FeatureFlagConfig {
-  static final FeatureFlagConfig EMPTY = new FeatureFlagConfigImpl(new IdentityHashMap<>());
-  private final IdentityHashMap<FeatureFlag<?>, Object> values;
+final class OptionStateImpl implements OptionState {
+  static final OptionState EMPTY = new OptionStateImpl(new IdentityHashMap<>());
+  private final IdentityHashMap<Option<?>, Object> values;
 
-  FeatureFlagConfigImpl(final IdentityHashMap<FeatureFlag<?>, Object> values) {
+  OptionStateImpl(final IdentityHashMap<Option<?>, Object> values) {
     this.values = new IdentityHashMap<>(values);
   }
 
   @Override
-  public boolean has(final @NotNull FeatureFlag<?> flag) {
-    return this.values.containsKey(requireNonNull(flag, "flag"));
+  public boolean has(final @NotNull Option<?> option) {
+    return this.values.containsKey(requireNonNull(option, "flag"));
   }
 
   @Override
-  public <V> V value(final @NotNull FeatureFlag<V> flag) {
-    final V value = flag.type().cast(this.values.get(requireNonNull(flag, "flag")));
-    return value == null ? flag.defaultValue() : value;
+  public <V> V value(final @NotNull Option<V> option) {
+    final V value = option.type().cast(this.values.get(requireNonNull(option, "flag")));
+    return value == null ? option.defaultValue() : value;
   }
 
   @Override
   public boolean equals(final @Nullable Object other) {
     if (this == other) return true;
     if (other == null || getClass() != other.getClass()) return false;
-    final FeatureFlagConfigImpl that = (FeatureFlagConfigImpl) other;
+    final OptionStateImpl that = (OptionStateImpl) other;
     return Objects.equals(this.values, that.values);
   }
 
@@ -75,28 +75,28 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
   }
 
   static final class VersionedImpl implements Versioned {
-    private final SortedMap<Integer, FeatureFlagConfig> sets;
+    private final SortedMap<Integer, OptionState> sets;
     private final int targetVersion;
-    private final FeatureFlagConfig filtered;
+    private final OptionState filtered;
 
-    VersionedImpl(final SortedMap<Integer, FeatureFlagConfig> sets, final int targetVersion, final FeatureFlagConfig filtered) {
+    VersionedImpl(final SortedMap<Integer, OptionState> sets, final int targetVersion, final OptionState filtered) {
       this.sets = sets;
       this.targetVersion = targetVersion;
       this.filtered = filtered;
     }
 
     @Override
-    public boolean has(final @NotNull FeatureFlag<?> flag) {
-      return this.filtered.has(flag);
+    public boolean has(final @NotNull Option<?> option) {
+      return this.filtered.has(option);
     }
 
     @Override
-    public <V> V value(final @NotNull FeatureFlag<V> flag) {
-      return this.filtered.value(flag);
+    public <V> V value(final @NotNull Option<V> option) {
+      return this.filtered.value(option);
     }
 
     @Override
-    public @NotNull Map<Integer, FeatureFlagConfig> childSets() {
+    public @NotNull Map<Integer, OptionState> childStates() {
       return Collections.unmodifiableSortedMap(this.sets.headMap(this.targetVersion + 1));
     }
 
@@ -105,10 +105,10 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
       return new VersionedImpl(this.sets, version, flattened(this.sets, version));
     }
 
-    public static FeatureFlagConfig flattened(final SortedMap<Integer, FeatureFlagConfig> versions, final int targetVersion) {
-      final Map<Integer, FeatureFlagConfig> applicable = versions.headMap(targetVersion + 1);
-      final FeatureFlagConfig.Builder builder = FeatureFlagConfig.featureFlagConfig();
-      for (final FeatureFlagConfig child : applicable.values()) {
+    public static OptionState flattened(final SortedMap<Integer, OptionState> versions, final int targetVersion) {
+      final Map<Integer, OptionState> applicable = versions.headMap(targetVersion + 1);
+      final OptionState.Builder builder = OptionState.optionState();
+      for (final OptionState child : applicable.values()) {
         builder.values(child);
       }
 
@@ -144,31 +144,31 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
     }
   }
 
-  static final class BuilderImpl implements FeatureFlagConfig.Builder {
-    private final IdentityHashMap<FeatureFlag<?>, Object> values = new IdentityHashMap<>();
+  static final class BuilderImpl implements OptionState.Builder {
+    private final IdentityHashMap<Option<?>, Object> values = new IdentityHashMap<>();
 
     @Override
-    public @NotNull FeatureFlagConfig build() {
+    public @NotNull OptionState build() {
       if (this.values.isEmpty()) return EMPTY;
 
-      return new FeatureFlagConfigImpl(this.values);
+      return new OptionStateImpl(this.values);
     }
 
     @Override
-    public <V> @NotNull Builder value(final @NotNull FeatureFlag<V> flag, final @NotNull V value) {
+    public <V> @NotNull Builder value(final @NotNull Option<V> option, final @NotNull V value) {
       this.values.put(
-        requireNonNull(flag, "flag"),
+        requireNonNull(option, "flag"),
         requireNonNull(value, "value")
       );
       return this;
     }
 
     @Override
-    public @NotNull Builder values(final @NotNull FeatureFlagConfig existing) {
-      if (existing instanceof FeatureFlagConfigImpl) {
-        this.values.putAll(((FeatureFlagConfigImpl) existing).values);
+    public @NotNull Builder values(final @NotNull OptionState existing) {
+      if (existing instanceof OptionStateImpl) {
+        this.values.putAll(((OptionStateImpl) existing).values);
       } else if (existing instanceof VersionedImpl) {
-        this.values.putAll(((FeatureFlagConfigImpl) ((VersionedImpl) existing).filtered).values);
+        this.values.putAll(((OptionStateImpl) ((VersionedImpl) existing).filtered).values);
       } else {
         throw new IllegalArgumentException("existing set " + existing + " is of an unknown implementation type");
       }
@@ -176,17 +176,17 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
     }
   }
 
-  static final class VersionedBuilderImpl implements FeatureFlagConfig.VersionedBuilder {
-    private final Map<Integer, FeatureFlagConfigImpl.BuilderImpl> builders = new TreeMap<>();
+  static final class VersionedBuilderImpl implements OptionState.VersionedBuilder {
+    private final Map<Integer, OptionStateImpl.BuilderImpl> builders = new TreeMap<>();
 
     @Override
-    public FeatureFlagConfig.@NotNull Versioned build() {
+    public OptionState.@NotNull Versioned build() {
       if (this.builders.isEmpty()) {
-        return new VersionedImpl(Collections.emptySortedMap(), 0, FeatureFlagConfig.emptyFeatureFlagConfig());
+        return new VersionedImpl(Collections.emptySortedMap(), 0, OptionState.emptyOptionState());
       }
 
-      final SortedMap<Integer, FeatureFlagConfig> built = new TreeMap<>();
-      for (final Map.Entry<Integer, FeatureFlagConfigImpl.BuilderImpl> entry : this.builders.entrySet()) {
+      final SortedMap<Integer, OptionState> built = new TreeMap<>();
+      for (final Map.Entry<Integer, OptionStateImpl.BuilderImpl> entry : this.builders.entrySet()) {
         built.put(entry.getKey(), entry.getValue().build());
       }
       // generate 'flattened' latest element
@@ -196,7 +196,7 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
     @Override
     public @NotNull VersionedBuilder version(final int version, final @NotNull Consumer<Builder> versionBuilder) {
       requireNonNull(versionBuilder, "versionBuilder")
-        .accept(this.builders.computeIfAbsent(version, $ -> new FeatureFlagConfigImpl.BuilderImpl()));
+        .accept(this.builders.computeIfAbsent(version, $ -> new OptionStateImpl.BuilderImpl()));
       return this;
     }
   }

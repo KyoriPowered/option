@@ -1,5 +1,5 @@
 /*
- * This file is part of feature-flag, licensed under the MIT License.
+ * This file is part of option, licensed under the MIT License.
  *
  * Copyright (c) 2023 KyoriPowered
  *
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.featureflag;
+package net.kyori.option;
 
 import java.util.Objects;
 import java.util.Set;
@@ -31,25 +31,25 @@ import org.jetbrains.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
-final class FeatureFlagImpl<V> implements FeatureFlag<V> {
+final class OptionImpl<V> implements Option<V> {
   private static final Set<String> KNOWN_KEYS = ConcurrentHashMap.newKeySet();
 
   private final String id;
   private final Class<V> type;
-  private final @Nullable V defaultValue; // excluded from equality comparisons, it does not form part of the flag identity
+  private final @Nullable V defaultValue; // excluded from equality comparisons, it does not form part of the option identity
 
-  FeatureFlagImpl(final @NotNull String id, final @NotNull Class<V> type, final @Nullable V defaultValue) {
+  OptionImpl(final @NotNull String id, final @NotNull Class<V> type, final @Nullable V defaultValue) {
     this.id = id;
     this.type = type;
     this.defaultValue = defaultValue;
   }
 
-  static <T> FeatureFlag<T> flag(final String id, final Class<T> type, final @Nullable T defaultValue) {
+  static <T> Option<T> option(final String id, final Class<T> type, final @Nullable T defaultValue) {
     if (!KNOWN_KEYS.add(id)) {
-      throw new IllegalStateException("Key " + id + " has already been used. Feature flag keys must be unique.");
+      throw new IllegalStateException("Key " + id + " has already been used. Option keys must be unique.");
     }
 
-    return new FeatureFlagImpl<>(
+    return new OptionImpl<>(
       requireNonNull(id, "id"),
       requireNonNull(type, "type"),
       defaultValue
@@ -75,7 +75,7 @@ final class FeatureFlagImpl<V> implements FeatureFlag<V> {
   public boolean equals(final @Nullable Object other) {
     if (this == other) return true;
     if (other == null || getClass() != other.getClass()) return false;
-    final FeatureFlagImpl<?> that = (FeatureFlagImpl<?>) other;
+    final OptionImpl<?> that = (OptionImpl<?>) other;
     return Objects.equals(this.id, that.id)
       && Objects.equals(this.type, that.type);
   }

@@ -1,5 +1,5 @@
 /*
- * This file is part of feature-flag, licensed under the MIT License.
+ * This file is part of option, licensed under the MIT License.
  *
  * Copyright (c) 2023 KyoriPowered
  *
@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.featureflag;
+package net.kyori.option;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A representation of a feature that can be toggled to one of several values.
+ * A representation of a configurable option.
  *
  * <p>Keys must be unique among all feature flag instances.</p>
  *
@@ -36,10 +36,10 @@ import org.jetbrains.annotations.Nullable;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface FeatureFlag<V> {
+public interface Option<V> {
 
   /**
-   * Create a feature flag with a boolean value type.
+   * Create an option with a boolean value type.
    *
    * <p>Flag keys must not be reused between flag instances.</p>
    *
@@ -48,12 +48,12 @@ public interface FeatureFlag<V> {
    * @return the flag instance
    * @since 1.0.0
    */
-  static FeatureFlag<Boolean> booleanFlag(final String id, final boolean defaultValue) {
-    return FeatureFlagImpl.flag(id, Boolean.class, defaultValue);
+  static Option<Boolean> booleanOption(final String id, final boolean defaultValue) {
+    return OptionImpl.option(id, Boolean.class, defaultValue);
   }
 
   /**
-   * Create a feature flag with an enum value type.
+   * Create an option with an enum value type.
    *
    * <p>Flag keys must not be reused between flag instances.</p>
    *
@@ -64,14 +64,14 @@ public interface FeatureFlag<V> {
    * @return the flag instance
    * @since 1.0.0
    */
-  static <E extends Enum<E>> FeatureFlag<E> enumFlag(final String id, final Class<E> enumClazz, final E defaultValue) {
-    return FeatureFlagImpl.flag(id, enumClazz, defaultValue);
+  static <E extends Enum<E>> Option<E> enumOption(final String id, final Class<E> enumClazz, final E defaultValue) {
+    return OptionImpl.option(id, enumClazz, defaultValue);
   }
 
   /**
-   * Get the flag id.
+   * Get the option id.
    *
-   * <p>This must be unique among feature flags.</p>
+   * <p>This must be unique among options.</p>
    *
    * @return the flag id
    * @since 1.0.0
@@ -79,7 +79,7 @@ public interface FeatureFlag<V> {
   @NotNull String id();
 
   /**
-   * Get the type of the flag value.
+   * Get the type of the option value.
    *
    * @return the value type
    * @since 1.0.0
@@ -87,7 +87,7 @@ public interface FeatureFlag<V> {
   @NotNull Class<V> type();
 
   /**
-   * Get a default value for the flag, if any is present.
+   * Get a default value for the option, if any is present.
    *
    * @return the default value
    * @since 1.0.0

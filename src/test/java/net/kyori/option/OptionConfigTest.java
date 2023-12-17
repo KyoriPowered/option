@@ -1,5 +1,5 @@
 /*
- * This file is part of feature-flag, licensed under the MIT License.
+ * This file is part of option, licensed under the MIT License.
  *
  * Copyright (c) 2017-2023 KyoriPowered
  *
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.featureflag;
+package net.kyori.option;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -30,31 +30,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FeatureFlagConfigTest {
+class OptionConfigTest {
 
   enum TestEnum {
     ONE, TWO, THREE
   }
 
-  private static final FeatureFlag<Boolean> ONE = FeatureFlag.booleanFlag(key("one"), true);
-  private static final FeatureFlag<Boolean> TWO = FeatureFlag.booleanFlag(key("two"), false);
-  private static final FeatureFlag<TestEnum> ENUM_FLAG = FeatureFlag.enumFlag(key("enum_flag"), TestEnum.class, TestEnum.ONE);
+  private static final Option<Boolean> ONE = Option.booleanOption(key("one"), true);
+  private static final Option<Boolean> TWO = Option.booleanOption(key("two"), false);
+  private static final Option<TestEnum> ENUM_FLAG = Option.enumOption(key("enum_flag"), TestEnum.class, TestEnum.ONE);
 
   @Test
   void testEmpty() {
-    assertFalse(FeatureFlagConfig.emptyFeatureFlagConfig().has(ONE));
-    assertFalse(FeatureFlagConfig.emptyFeatureFlagConfig().has(TWO));
-    assertFalse(FeatureFlagConfig.emptyFeatureFlagConfig().has(ENUM_FLAG));
+    assertFalse(OptionState.emptyOptionState().has(ONE));
+    assertFalse(OptionState.emptyOptionState().has(TWO));
+    assertFalse(OptionState.emptyOptionState().has(ENUM_FLAG));
   }
 
   @Test
   void testEmptyEqualToBuilder() {
-    assertEquals(FeatureFlagConfig.emptyFeatureFlagConfig(), FeatureFlagConfig.featureFlagConfig().build());
+    assertEquals(OptionState.emptyOptionState(), OptionState.optionState().build());
   }
 
   @Test
   void testFixedValue() {
-    final FeatureFlagConfig set = FeatureFlagConfig.featureFlagConfig()
+    final OptionState set = OptionState.optionState()
       .value(ONE, false)
       .build();
 
@@ -65,7 +65,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testDefaultValues() {
-    final FeatureFlagConfig set = FeatureFlagConfig.featureFlagConfig()
+    final OptionState set = OptionState.optionState()
       .build();
 
     assertFalse(set.has(ONE));
@@ -76,7 +76,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testMixedTypes() {
-    final FeatureFlagConfig set = FeatureFlagConfig.featureFlagConfig()
+    final OptionState set = OptionState.optionState()
       .value(ONE, false)
       .value(ENUM_FLAG, TestEnum.THREE)
       .build();
@@ -88,12 +88,12 @@ class FeatureFlagConfigTest {
 
   @Test
   void testBuilderFromExisting() {
-    final FeatureFlagConfig existing = FeatureFlagConfig.featureFlagConfig()
+    final OptionState existing = OptionState.optionState()
       .value(ONE, false)
       .value(ENUM_FLAG, TestEnum.THREE)
       .build();
 
-    final FeatureFlagConfig updated = FeatureFlagConfig.featureFlagConfig()
+    final OptionState updated = OptionState.optionState()
       .values(existing)
       .build();
 
@@ -102,7 +102,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionedBaseLevel() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
+    final OptionState.Versioned versioned = OptionState.versionedOptionState()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -118,7 +118,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionLower() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
+    final OptionState.Versioned versioned = OptionState.versionedOptionState()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -136,7 +136,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionHigher() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
+    final OptionState.Versioned versioned = OptionState.versionedOptionState()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -155,7 +155,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionBetweenSteps() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
+    final OptionState.Versioned versioned = OptionState.versionedOptionState()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))

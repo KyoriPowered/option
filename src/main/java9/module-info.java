@@ -1,8 +1,8 @@
 /**
  * Feature flag system.
  */
-module net.kyori.featureflag {
+module net.kyori.option {
   requires static transitive org.jetbrains.annotations;
 
-  exports net.kyori.featureflag;
+  exports net.kyori.option;
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of feature-flag, licensed under the MIT License.
+ * This file is part of option, licensed under the MIT License.
  *
  * Copyright (c) 2023 KyoriPowered
  *
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.featureflag;
+package net.kyori.option;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -34,76 +34,76 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  */
 @ApiStatus.NonExtendable
-public interface FeatureFlagConfig {
+public interface OptionState {
   /**
-   * Get an empty set of feature flags.
+   * Get an empty set of options.
    *
-   * @return the empty feature flag set
+   * @return the empty option state
    * @since 1.0.0
    */
-  static FeatureFlagConfig emptyFeatureFlagConfig() {
-    return FeatureFlagConfigImpl.EMPTY;
+  static OptionState emptyOptionState() {
+    return OptionStateImpl.EMPTY;
   }
 
   /**
-   * Create a builder for an unversioned feature flag set.
+   * Create a builder for an unversioned option state.
    *
    * @return the builder
    * @since 1.0.0
    */
-  static @NotNull Builder featureFlagConfig() {
-    return new FeatureFlagConfigImpl.BuilderImpl();
+  static @NotNull Builder optionState() {
+    return new OptionStateImpl.BuilderImpl();
   }
 
   /**
-   * Create a builder for a versioned feature flag set.
+   * Create a builder for a versioned option state.
    *
    * @return the builder
    * @since 1.0.0
    */
-  static @NotNull VersionedBuilder versionedFeatureFlagConfig() {
-    return new FeatureFlagConfigImpl.VersionedBuilderImpl();
+  static @NotNull VersionedBuilder versionedOptionState() {
+    return new OptionStateImpl.VersionedBuilderImpl();
   }
 
 
   /**
-   * Get whether a flag set contains a certain flag at all.
+   * Get whether this state contains a certain option at all.
    *
-   * @param flag the flag to check.
-   * @return whether the flag has been touched.
+   * @param option the option to check.
+   * @return whether the option has been touched.
    * @since 1.0.0
    */
-  boolean has(final @NotNull FeatureFlag<?> flag);
+  boolean has(final @NotNull Option<?> option);
 
   /**
-   * Get the value set for a certain flag.
+   * Get the value set for a certain option.
    *
-   * @param flag the flag to query
-   * @return the flag value
+   * @param option the option to query
+   * @return the option value
    * @param <V> the value type
    * @since 1.0.0
    */
-  <V> V value(final @NotNull FeatureFlag<V> flag);
+  <V> V value(final @NotNull Option<V> option);
 
   /**
-   * A composite feature flag set.
+   * A composite option set.
    *
    * <p>By default, this returns results for the newest supported version.</p>
    *
    * @since 1.0.0
    */
   @ApiStatus.NonExtendable
-  interface Versioned extends FeatureFlagConfig {
+  interface Versioned extends OptionState {
     /**
      * The individual changes in each supported version.
      *
      * @return the child sets that exist
      * @since 1.0.0
      */
-    @NotNull Map<Integer, FeatureFlagConfig> childSets();
+    @NotNull Map<Integer, OptionState> childStates();
 
     /**
-     * Request a view of this feature flag set showing only flags available at versions up to and including {@code version}.
+     * Request a view of this option state showing only option values available at versions up to and including {@code version}.
      *
      * @param version the version to query
      * @return a limited view of this set
@@ -113,62 +113,62 @@ public interface FeatureFlagConfig {
   }
 
   /**
-   * A builder for feature flag sets.
+   * A builder for option states.
    *
    * @since 1.0.0
    */
   @ApiStatus.NonExtendable
   interface Builder {
     /**
-     * Set the value for a specific flag.
+     * Set the value for a specific option.
      *
-     * @param flag the flag to set the value for
+     * @param option the option to set the value for
      * @param value the value
      * @return this builder
      * @param <V> the value type
      * @since 1.0.0
      */
-    <V> @NotNull Builder value(final @NotNull FeatureFlag<V> flag, final @NotNull V value);
+    <V> @NotNull Builder value(final @NotNull Option<V> option, final @NotNull V value);
 
     /**
-     * Apply all values from the existing feature flag set.
+     * Apply all values from the existing option state.
      *
-     * @param existing the existing set
+     * @param existing the existing state
      * @return this builder
      * @since 1.0.0
      */
-    @NotNull Builder values(final @NotNull FeatureFlagConfig existing);
+    @NotNull Builder values(final @NotNull OptionState existing);
 
     /**
-     * Create a completed feature flag config.
+     * Create a completed option state.
      *
-     * @return the built config
+     * @return the built state
      * @since 1.0.0
      */
-    @NotNull FeatureFlagConfig build();
+    @NotNull OptionState build();
   }
 
   /**
-   * A builder for versioned feature flag sets.
+   * A builder for versioned option states.
    *
    * @since 1.0.0
    */
   @ApiStatus.NonExtendable
   interface VersionedBuilder {
     /**
-     * Register feature flags for a specific version.
+     * Register options for a specific version.
      *
      * @param version the version to register
-     * @param versionBuilder the builder that will receive flags
+     * @param versionBuilder the builder that will receive options
      * @return this builder
      * @since 1.0.0
      */
     @NotNull VersionedBuilder version(final int version, final @NotNull Consumer<Builder> versionBuilder);
 
     /**
-     * Create a completed versioned flag config.
+     * Create a completed versioned option state.
      *
-     * @return the built versioned config
+     * @return the built versioned state
      * @since 1.0.0
      */
     @NotNull Versioned build();

@@ -1,4 +1,4 @@
-This file is part of feature-flag, licensed under the MIT License.
+This file is part of option, licensed under the MIT License.
 
 Copyright (c) $YEAR KyoriPowered
 

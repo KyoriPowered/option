@@ -16,4 +16,4 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "feature-flag"
+rootProject.name = "option"

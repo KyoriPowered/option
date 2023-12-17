@@ -31,7 +31,7 @@ sourceSets {
   main {
     multirelease {
       alternateVersions(9)
-      moduleName("net.kyori.featureflag")
+      moduleName("net.kyori.option")
       requireAllPackagesExported()
     }
   }
@@ -42,7 +42,7 @@ indraSonatype {
 }
 
 indra {
-  github("KyoriPowered", "feature-flag") {
+  github("KyoriPowered", "option") {
     ci(true)
   }
   mitLicense()
@@ -56,7 +56,7 @@ indra {
   signWithKeyFromPrefixedProperties("kyori")
   configurePublications {
     pom {
-      url = "https://feature-flag.kyori.net"
+      url = "https://option.kyori.net"
       developers {
         developer {
           id = "kashike"
