@@ -42,14 +42,19 @@ class FeatureFlagConfigTest {
 
   @Test
   void testEmpty() {
-    assertFalse(FeatureFlagConfig.empty().has(ONE));
-    assertFalse(FeatureFlagConfig.empty().has(TWO));
-    assertFalse(FeatureFlagConfig.empty().has(ENUM_FLAG));
+    assertFalse(FeatureFlagConfig.emptyFeatureFlagConfig().has(ONE));
+    assertFalse(FeatureFlagConfig.emptyFeatureFlagConfig().has(TWO));
+    assertFalse(FeatureFlagConfig.emptyFeatureFlagConfig().has(ENUM_FLAG));
+  }
+
+  @Test
+  void testEmptyEqualToBuilder() {
+    assertEquals(FeatureFlagConfig.emptyFeatureFlagConfig(), FeatureFlagConfig.featureFlagConfig().build());
   }
 
   @Test
   void testFixedValue() {
-    final FeatureFlagConfig set = FeatureFlagConfig.builder()
+    final FeatureFlagConfig set = FeatureFlagConfig.featureFlagConfig()
       .value(ONE, false)
       .build();
 
@@ -60,7 +65,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testDefaultValues() {
-    final FeatureFlagConfig set = FeatureFlagConfig.builder()
+    final FeatureFlagConfig set = FeatureFlagConfig.featureFlagConfig()
       .build();
 
     assertFalse(set.has(ONE));
@@ -71,7 +76,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testMixedTypes() {
-    final FeatureFlagConfig set = FeatureFlagConfig.builder()
+    final FeatureFlagConfig set = FeatureFlagConfig.featureFlagConfig()
       .value(ONE, false)
       .value(ENUM_FLAG, TestEnum.THREE)
       .build();
@@ -83,12 +88,12 @@ class FeatureFlagConfigTest {
 
   @Test
   void testBuilderFromExisting() {
-    final FeatureFlagConfig existing = FeatureFlagConfig.builder()
+    final FeatureFlagConfig existing = FeatureFlagConfig.featureFlagConfig()
       .value(ONE, false)
       .value(ENUM_FLAG, TestEnum.THREE)
       .build();
 
-    final FeatureFlagConfig updated = FeatureFlagConfig.builder()
+    final FeatureFlagConfig updated = FeatureFlagConfig.featureFlagConfig()
       .values(existing)
       .build();
 
@@ -97,7 +102,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionedBaseLevel() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -113,7 +118,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionLower() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -131,7 +136,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionHigher() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -150,7 +155,7 @@ class FeatureFlagConfigTest {
 
   @Test
   void testVersionBetweenSteps() {
-    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedFeatureFlagConfig()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))

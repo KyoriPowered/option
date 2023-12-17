@@ -107,7 +107,7 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
 
     public static FeatureFlagConfig flattened(final SortedMap<Integer, FeatureFlagConfig> versions, final int targetVersion) {
       final Map<Integer, FeatureFlagConfig> applicable = versions.headMap(targetVersion + 1);
-      final FeatureFlagConfig.Builder builder = FeatureFlagConfig.builder();
+      final FeatureFlagConfig.Builder builder = FeatureFlagConfig.featureFlagConfig();
       for (final FeatureFlagConfig child : applicable.values()) {
         builder.values(child);
       }
@@ -182,7 +182,7 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
     @Override
     public FeatureFlagConfig.@NotNull Versioned build() {
       if (this.builders.isEmpty()) {
-        return new VersionedImpl(Collections.emptySortedMap(), 0, FeatureFlagConfig.empty());
+        return new VersionedImpl(Collections.emptySortedMap(), 0, FeatureFlagConfig.emptyFeatureFlagConfig());
       }
 
       final SortedMap<Integer, FeatureFlagConfig> built = new TreeMap<>();

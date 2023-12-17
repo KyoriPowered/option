@@ -41,7 +41,7 @@ public interface FeatureFlagConfig {
    * @return the empty feature flag set
    * @since 1.0.0
    */
-  static FeatureFlagConfig empty() {
+  static FeatureFlagConfig emptyFeatureFlagConfig() {
     return FeatureFlagConfigImpl.EMPTY;
   }
 
@@ -51,7 +51,7 @@ public interface FeatureFlagConfig {
    * @return the builder
    * @since 1.0.0
    */
-  static @NotNull Builder builder() {
+  static @NotNull Builder featureFlagConfig() {
     return new FeatureFlagConfigImpl.BuilderImpl();
   }
 
@@ -61,7 +61,7 @@ public interface FeatureFlagConfig {
    * @return the builder
    * @since 1.0.0
    */
-  static @NotNull VersionedBuilder versionedBuilder() {
+  static @NotNull VersionedBuilder versionedFeatureFlagConfig() {
     return new FeatureFlagConfigImpl.VersionedBuilderImpl();
   }
 
