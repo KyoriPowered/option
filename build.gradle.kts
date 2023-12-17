@@ -75,3 +75,7 @@ indra {
 indraCrossdoc {
   baseUrl().set(providers.gradleProperty("javadocPublishRoot"))
 }
+
+tasks.jar {
+  indraGit.applyVcsInformationToManifest(manifest)
+}
