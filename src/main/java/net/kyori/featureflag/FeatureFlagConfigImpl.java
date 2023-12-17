@@ -26,10 +26,12 @@ package net.kyori.featureflag;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -50,6 +52,26 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
   public <V> V value(final @NotNull FeatureFlag<V> flag) {
     final V value = flag.type().cast(this.values.get(requireNonNull(flag, "flag")));
     return value == null ? flag.defaultValue() : value;
+  }
+
+  @Override
+  public boolean equals(final @Nullable Object other) {
+    if (this == other) return true;
+    if (other == null || getClass() != other.getClass()) return false;
+    final FeatureFlagConfigImpl that = (FeatureFlagConfigImpl) other;
+    return Objects.equals(this.values, that.values);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.values);
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + "{" +
+      "values=" + this.values +
+      '}';
   }
 
   static final class VersionedImpl implements Versioned {
@@ -91,6 +113,34 @@ final class FeatureFlagConfigImpl implements FeatureFlagConfig {
       }
 
       return builder.build();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object other) {
+      if (this == other) return true;
+      if (other == null || getClass() != other.getClass()) return false;
+      final VersionedImpl that = (VersionedImpl) other;
+      return this.targetVersion == that.targetVersion
+        && Objects.equals(this.sets, that.sets)
+        && Objects.equals(this.filtered, that.filtered);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+        this.sets,
+        this.targetVersion,
+        this.filtered
+      );
+    }
+
+    @Override
+    public String toString() {
+      return this.getClass().getSimpleName() + "{" +
+        "sets=" + this.sets +
+        ", targetVersion=" + this.targetVersion +
+        ", filtered=" + this.filtered +
+        '}';
     }
   }
 

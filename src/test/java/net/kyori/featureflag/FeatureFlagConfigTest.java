@@ -54,6 +54,7 @@ class FeatureFlagConfigTest {
       .build();
 
     assertTrue(set.has(ONE));
+    assertFalse(set.has(TWO));
     assertFalse(set.value(ONE));
   }
 
@@ -70,10 +71,99 @@ class FeatureFlagConfigTest {
 
   @Test
   void testMixedTypes() {
+    final FeatureFlagConfig set = FeatureFlagConfig.builder()
+      .value(ONE, false)
+      .value(ENUM_FLAG, TestEnum.THREE)
+      .build();
+
+    assertTrue(set.has(ONE));
+    assertFalse(set.has(TWO));
+    assertFalse(set.value(ONE));
   }
 
   @Test
   void testBuilderFromExisting() {
+    final FeatureFlagConfig existing = FeatureFlagConfig.builder()
+      .value(ONE, false)
+      .value(ENUM_FLAG, TestEnum.THREE)
+      .build();
+
+    final FeatureFlagConfig updated = FeatureFlagConfig.builder()
+      .values(existing)
+      .build();
+
+    assertEquals(existing, updated);
+  }
+
+  @Test
+  void testVersionedBaseLevel() {
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+      .version(0, b -> b
+        .value(TWO, true)
+        .value(ENUM_FLAG, TestEnum.THREE))
+      .version(3, b -> b
+        .value(ONE, false))
+      .version(5, b -> b
+        .value(ENUM_FLAG, TestEnum.TWO))
+      .build();
+
+    assertEquals(TestEnum.TWO, versioned.value(ENUM_FLAG));
+    assertEquals(true, versioned.value(TWO));
+  }
+
+  @Test
+  void testVersionLower() {
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+      .version(0, b -> b
+        .value(TWO, true)
+        .value(ENUM_FLAG, TestEnum.THREE))
+      .version(3, b -> b
+        .value(ONE, false))
+      .version(5, b -> b
+        .value(ENUM_FLAG, TestEnum.TWO))
+      .build()
+      .at(3);
+
+    assertEquals(TestEnum.THREE, versioned.value(ENUM_FLAG));
+    assertEquals(false, versioned.value(ONE));
+    assertEquals(true, versioned.value(TWO));
+  }
+
+  @Test
+  void testVersionHigher() {
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+      .version(0, b -> b
+        .value(TWO, true)
+        .value(ENUM_FLAG, TestEnum.THREE))
+      .version(3, b -> b
+        .value(ONE, false))
+      .version(5, b -> b
+        .value(ENUM_FLAG, TestEnum.TWO))
+      .build()
+      .at(7);
+
+    assertEquals(TestEnum.TWO, versioned.value(ENUM_FLAG));
+    assertEquals(false, versioned.value(ONE));
+    assertEquals(true, versioned.value(TWO));
+
+  }
+
+  @Test
+  void testVersionBetweenSteps() {
+    final FeatureFlagConfig.Versioned versioned = FeatureFlagConfig.versionedBuilder()
+      .version(0, b -> b
+        .value(TWO, true)
+        .value(ENUM_FLAG, TestEnum.THREE))
+      .version(3, b -> b
+        .value(ONE, false))
+      .version(5, b -> b
+        .value(ENUM_FLAG, TestEnum.TWO))
+      .build()
+      .at(4);
+
+    assertEquals(TestEnum.THREE, versioned.value(ENUM_FLAG));
+    assertEquals(false, versioned.value(ONE));
+    assertEquals(true, versioned.value(TWO));
   }
 
   private static @NotNull String key(final String path) {
