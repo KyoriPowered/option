@@ -172,6 +172,6 @@ class OptionConfigTest {
   }
 
   private static @NotNull String key(final String path) {
-    return "feature-flag:test/" + path;
+    return "option:test/" + path;
   }
 }
