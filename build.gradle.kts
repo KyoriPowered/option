@@ -21,7 +21,7 @@ spotless {
   ratchetFrom("origin/trunk")
   java {
     endWithNewline()
-    indentWithSpaces(2)
+    leadingTabsToSpaces(2)
     importOrderFile(rootProject.file(".spotless/kyori.importorder"))
     trimTrailingWhitespace()
   }
