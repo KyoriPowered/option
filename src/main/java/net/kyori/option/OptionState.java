@@ -25,6 +25,7 @@ package net.kyori.option;
 
 import java.util.Map;
 import java.util.function.Consumer;
+import net.kyori.option.value.ValueSource;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -151,6 +152,15 @@ public interface OptionState {
      * @since 1.0.0
      */
     @NotNull Builder values(final @NotNull OptionState existing);
+
+    /**
+     * Set a value for all options within the {@link #schema()} where a value is provided by the {@code source}.
+     *
+     * @param source a source to populate values
+     * @return this builder
+     * @since 1.1.0
+     */
+    @NotNull Builder values(final @NotNull ValueSource source);
 
     /**
      * Create a completed option state.
