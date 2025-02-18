@@ -71,6 +71,13 @@ final class OptionSchemaImpl implements OptionSchema {
     return this.emptyState;
   }
 
+  @Override
+  public String toString() {
+    return "OptionSchemaImpl{" +
+      "options=" + this.options +
+      '}';
+  }
+
   static final class Instances {
     static OptionSchemaImpl.MutableImpl GLOBAL = new OptionSchemaImpl(null).new MutableImpl();
   }
@@ -145,6 +152,11 @@ final class OptionSchemaImpl implements OptionSchema {
     @Override
     public OptionState emptyState() {
       return OptionSchemaImpl.this.emptyState();
+    }
+
+    @Override
+    public String toString() {
+      return "MutableImpl{schema=" + OptionSchemaImpl.this + "}";
     }
   }
 }
