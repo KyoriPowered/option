@@ -40,7 +40,7 @@ public interface OptionSchema {
   /**
    * Retrieve the globally-shared option schema.
    *
-   * <p>This mostly exists for backwards compatibility.</p>
+   * <p>This mostly exists for backwards compatibility, and should not be used in new software.</p>
    *
    * @return the global schema
    * @since 1.1.0
@@ -77,7 +77,7 @@ public interface OptionSchema {
    * @since 1.1.0
    */
   static OptionSchema.@NotNull Mutable emptySchema() {
-    return childSchema(globalSchema());
+    return new OptionSchemaImpl(null).new MutableImpl();
   }
 
   /**
