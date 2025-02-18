@@ -1,7 +1,7 @@
 /*
  * This file is part of option, licensed under the MIT License.
  *
- * Copyright (c) 2023 KyoriPowered
+ * Copyright (c) 2023-2025 KyoriPowered
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,12 +28,30 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class OptionTest {
+public class OptionSchemaTest {
   @Test
   void testMultipleOfKeysFails() {
     final String id = "test_flag";
 
-    assertDoesNotThrow(() -> Option.booleanOption(id, false));
-    assertThrows(IllegalStateException.class, () -> Option.booleanOption(id, false));
+    final OptionSchema.Mutable schema = OptionSchema.emptySchema();
+    assertDoesNotThrow(() -> schema.booleanOption(id, false));
+    assertThrows(IllegalStateException.class, () -> schema.booleanOption(id, false));
+  }
+
+  @Test
+  void testSameKeyInSeparateSchemas() {
+    final String id = "test_flag";
+
+    assertDoesNotThrow(() -> OptionSchema.emptySchema().booleanOption(id, false));
+    assertDoesNotThrow(() -> OptionSchema.emptySchema().booleanOption(id, false));
+  }
+
+  @Test
+  void testInheritedDoesThrow() {
+    final String id = "test_flag";
+
+    final OptionSchema.Mutable schema = OptionSchema.emptySchema();
+    assertDoesNotThrow(() -> schema.booleanOption(id, false));
+    assertThrows(IllegalStateException.class, () -> OptionSchema.childSchema(schema).booleanOption(id, false));
   }
 }

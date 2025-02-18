@@ -1,7 +1,7 @@
 /*
  * This file is part of option, licensed under the MIT License.
  *
- * Copyright (c) 2023 KyoriPowered
+ * Copyright (c) 2023-2025 KyoriPowered
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,11 @@ public interface OptionState {
    *
    * @return the empty option state
    * @since 1.0.0
+   * @deprecated for removal since 1.1.0, access via {@link OptionSchema#emptyState()} instead
    */
+  @Deprecated
   static OptionState emptyOptionState() {
-    return OptionStateImpl.EMPTY;
+    return OptionSchema.globalSchema().emptyState();
   }
 
   /**
@@ -50,9 +52,11 @@ public interface OptionState {
    *
    * @return the builder
    * @since 1.0.0
+   * @deprecated for removal since 1.1.0, create states via {@link OptionSchema#stateBuilder()} instead
    */
+  @Deprecated
   static @NotNull Builder optionState() {
-    return new OptionStateImpl.BuilderImpl();
+    return OptionSchema.globalSchema().stateBuilder();
   }
 
   /**
@@ -60,11 +64,20 @@ public interface OptionState {
    *
    * @return the builder
    * @since 1.0.0
+   * @deprecated for removal since 1.1.0, create states via {@link OptionSchema#versionedStateBuilder()} instead
    */
+  @Deprecated
   static @NotNull VersionedBuilder versionedOptionState() {
-    return new OptionStateImpl.VersionedBuilderImpl();
+    return OptionSchema.globalSchema().versionedStateBuilder();
   }
 
+  /**
+   * Get the option schema defining options that can be set within this state.
+   *
+   * @return the option schema
+   * @since 1.1.0
+   */
+  @NotNull OptionSchema schema();
 
   /**
    * Get whether this state contains a certain option at all.

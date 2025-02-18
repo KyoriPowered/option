@@ -1,7 +1,7 @@
 /*
  * This file is part of option, licensed under the MIT License.
  *
- * Copyright (c) 2017-2023 KyoriPowered
+ * Copyright (c) 2017-2025 KyoriPowered
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,25 +36,27 @@ class OptionConfigTest {
     ONE, TWO, THREE
   }
 
-  private static final Option<Boolean> ONE = Option.booleanOption(key("one"), true);
-  private static final Option<Boolean> TWO = Option.booleanOption(key("two"), false);
-  private static final Option<TestEnum> ENUM_FLAG = Option.enumOption(key("enum_flag"), TestEnum.class, TestEnum.ONE);
+  private static final OptionSchema.Mutable UNSAFE_SCHEMA = OptionSchema.emptySchema();
+  private static final OptionSchema SCHEMA = UNSAFE_SCHEMA.frozenView();
+  private static final Option<Boolean> ONE = UNSAFE_SCHEMA.booleanOption(key("one"), true);
+  private static final Option<Boolean> TWO = UNSAFE_SCHEMA.booleanOption(key("two"), false);
+  private static final Option<TestEnum> ENUM_FLAG = UNSAFE_SCHEMA.enumOption(key("enum_flag"), TestEnum.class, TestEnum.ONE);
 
   @Test
   void testEmpty() {
-    assertFalse(OptionState.emptyOptionState().has(ONE));
-    assertFalse(OptionState.emptyOptionState().has(TWO));
-    assertFalse(OptionState.emptyOptionState().has(ENUM_FLAG));
+    assertFalse(SCHEMA.emptyState().has(ONE));
+    assertFalse(SCHEMA.emptyState().has(TWO));
+    assertFalse(SCHEMA.emptyState().has(ENUM_FLAG));
   }
 
   @Test
   void testEmptyEqualToBuilder() {
-    assertEquals(OptionState.emptyOptionState(), OptionState.optionState().build());
+    assertEquals(SCHEMA.emptyState(), SCHEMA.stateBuilder().build());
   }
 
   @Test
   void testFixedValue() {
-    final OptionState set = OptionState.optionState()
+    final OptionState set = SCHEMA.stateBuilder()
       .value(ONE, false)
       .build();
 
@@ -65,7 +67,7 @@ class OptionConfigTest {
 
   @Test
   void testDefaultValues() {
-    final OptionState set = OptionState.optionState()
+    final OptionState set = SCHEMA.stateBuilder()
       .build();
 
     assertFalse(set.has(ONE));
@@ -76,7 +78,7 @@ class OptionConfigTest {
 
   @Test
   void testMixedTypes() {
-    final OptionState set = OptionState.optionState()
+    final OptionState set = SCHEMA.stateBuilder()
       .value(ONE, false)
       .value(ENUM_FLAG, TestEnum.THREE)
       .build();
@@ -88,12 +90,12 @@ class OptionConfigTest {
 
   @Test
   void testBuilderFromExisting() {
-    final OptionState existing = OptionState.optionState()
+    final OptionState existing = SCHEMA.stateBuilder()
       .value(ONE, false)
       .value(ENUM_FLAG, TestEnum.THREE)
       .build();
 
-    final OptionState updated = OptionState.optionState()
+    final OptionState updated = SCHEMA.stateBuilder()
       .values(existing)
       .build();
 
@@ -102,7 +104,7 @@ class OptionConfigTest {
 
   @Test
   void testVersionedBaseLevel() {
-    final OptionState.Versioned versioned = OptionState.versionedOptionState()
+    final OptionState.Versioned versioned = SCHEMA.versionedStateBuilder()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -118,7 +120,7 @@ class OptionConfigTest {
 
   @Test
   void testVersionLower() {
-    final OptionState.Versioned versioned = OptionState.versionedOptionState()
+    final OptionState.Versioned versioned = SCHEMA.versionedStateBuilder()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -136,7 +138,7 @@ class OptionConfigTest {
 
   @Test
   void testVersionHigher() {
-    final OptionState.Versioned versioned = OptionState.versionedOptionState()
+    final OptionState.Versioned versioned = SCHEMA.versionedStateBuilder()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))
@@ -155,7 +157,7 @@ class OptionConfigTest {
 
   @Test
   void testVersionBetweenSteps() {
-    final OptionState.Versioned versioned = OptionState.versionedOptionState()
+    final OptionState.Versioned versioned = SCHEMA.versionedStateBuilder()
       .version(0, b -> b
         .value(TWO, true)
         .value(ENUM_FLAG, TestEnum.THREE))

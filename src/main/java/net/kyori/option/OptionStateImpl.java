@@ -1,7 +1,7 @@
 /*
  * This file is part of option, licensed under the MIT License.
  *
- * Copyright (c) 2023 KyoriPowered
+ * Copyright (c) 2023-2025 KyoriPowered
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,17 @@ import org.jetbrains.annotations.Nullable;
 import static java.util.Objects.requireNonNull;
 
 final class OptionStateImpl implements OptionState {
-  static final OptionState EMPTY = new OptionStateImpl(new IdentityHashMap<>());
+  private final OptionSchema schema;
   private final IdentityHashMap<Option<?>, Object> values;
 
-  OptionStateImpl(final IdentityHashMap<Option<?>, Object> values) {
+  OptionStateImpl(final OptionSchema schema, final IdentityHashMap<Option<?>, Object> values) {
+    this.schema = schema;
     this.values = new IdentityHashMap<>(values);
+  }
+
+  @Override
+  public @NotNull OptionSchema schema() {
+    return this.schema;
   }
 
   @Override
@@ -75,14 +81,21 @@ final class OptionStateImpl implements OptionState {
   }
 
   static final class VersionedImpl implements Versioned {
+    private final OptionSchema schema;
     private final SortedMap<Integer, OptionState> sets;
     private final int targetVersion;
     private final OptionState filtered;
 
-    VersionedImpl(final SortedMap<Integer, OptionState> sets, final int targetVersion, final OptionState filtered) {
+    VersionedImpl(final OptionSchema schema, final SortedMap<Integer, OptionState> sets, final int targetVersion, final OptionState filtered) {
+      this.schema = schema;
       this.sets = sets;
       this.targetVersion = targetVersion;
       this.filtered = filtered;
+    }
+
+    @Override
+    public @NotNull OptionSchema schema() {
+      return this.schema;
     }
 
     @Override
@@ -102,12 +115,12 @@ final class OptionStateImpl implements OptionState {
 
     @Override
     public @NotNull Versioned at(final int version) {
-      return new VersionedImpl(this.sets, version, flattened(this.sets, version));
+      return new VersionedImpl(this.schema, this.sets, version, flattened(this.schema, this.sets, version));
     }
 
-    public static OptionState flattened(final SortedMap<Integer, OptionState> versions, final int targetVersion) {
+    public static OptionState flattened(final OptionSchema schema, final SortedMap<Integer, OptionState> versions, final int targetVersion) {
       final Map<Integer, OptionState> applicable = versions.headMap(targetVersion + 1);
-      final OptionState.Builder builder = OptionState.optionState();
+      final OptionState.Builder builder = schema.stateBuilder();
       for (final OptionState child : applicable.values()) {
         builder.values(child);
       }
@@ -121,6 +134,7 @@ final class OptionStateImpl implements OptionState {
       if (other == null || getClass() != other.getClass()) return false;
       final VersionedImpl that = (VersionedImpl) other;
       return this.targetVersion == that.targetVersion
+        && Objects.equals(this.schema, that.schema)
         && Objects.equals(this.sets, that.sets)
         && Objects.equals(this.filtered, that.filtered);
     }
@@ -128,6 +142,7 @@ final class OptionStateImpl implements OptionState {
     @Override
     public int hashCode() {
       return Objects.hash(
+        this.schema,
         this.sets,
         this.targetVersion,
         this.filtered
@@ -137,7 +152,8 @@ final class OptionStateImpl implements OptionState {
     @Override
     public String toString() {
       return this.getClass().getSimpleName() + "{" +
-        "sets=" + this.sets +
+        "schema=" + this.schema +
+        ", sets=" + this.sets +
         ", targetVersion=" + this.targetVersion +
         ", filtered=" + this.filtered +
         '}';
@@ -145,17 +161,26 @@ final class OptionStateImpl implements OptionState {
   }
 
   static final class BuilderImpl implements OptionState.Builder {
+    private final OptionSchema schema;
     private final IdentityHashMap<Option<?>, Object> values = new IdentityHashMap<>();
+
+    BuilderImpl(final OptionSchema schema) {
+      this.schema = schema;
+    }
 
     @Override
     public @NotNull OptionState build() {
-      if (this.values.isEmpty()) return EMPTY;
+      if (this.values.isEmpty()) return this.schema.emptyState();
 
-      return new OptionStateImpl(this.values);
+      return new OptionStateImpl(this.schema, this.values);
     }
 
     @Override
     public <V> @NotNull Builder value(final @NotNull Option<V> option, final @NotNull V value) {
+      if (!this.schema.has(option)) {
+        throw new IllegalStateException("Option '" + option.id() + "' was not present in active schema");
+      }
+
       this.values.put(
         requireNonNull(option, "flag"),
         requireNonNull(value, "value")
@@ -163,12 +188,22 @@ final class OptionStateImpl implements OptionState {
       return this;
     }
 
+    private void putAll(final Map<Option<?>, Object> values) {
+      for (final Map.Entry<Option<?>, Object> entry : values.entrySet()) {
+        if (!this.schema.has(entry.getKey())) {
+          throw new IllegalStateException("Option '" + entry.getKey().id() + "' was not present in active schema");
+        }
+
+        this.values.put(entry.getKey(), entry.getValue());
+      }
+    }
+
     @Override
     public @NotNull Builder values(final @NotNull OptionState existing) {
       if (existing instanceof OptionStateImpl) {
-        this.values.putAll(((OptionStateImpl) existing).values);
+        this.putAll(((OptionStateImpl) existing).values);
       } else if (existing instanceof VersionedImpl) {
-        this.values.putAll(((OptionStateImpl) ((VersionedImpl) existing).filtered).values);
+        this.putAll(((OptionStateImpl) ((VersionedImpl) existing).filtered).values);
       } else {
         throw new IllegalArgumentException("existing set " + existing + " is of an unknown implementation type");
       }
@@ -177,12 +212,17 @@ final class OptionStateImpl implements OptionState {
   }
 
   static final class VersionedBuilderImpl implements OptionState.VersionedBuilder {
+    private final OptionSchema schema;
     private final Map<Integer, OptionStateImpl.BuilderImpl> builders = new TreeMap<>();
+
+    VersionedBuilderImpl(final @NotNull OptionSchema schema) {
+      this.schema = schema;
+    }
 
     @Override
     public OptionState.@NotNull Versioned build() {
       if (this.builders.isEmpty()) {
-        return new VersionedImpl(Collections.emptySortedMap(), 0, OptionState.emptyOptionState());
+        return new VersionedImpl(this.schema, Collections.emptySortedMap(), 0, this.schema.emptyState());
       }
 
       final SortedMap<Integer, OptionState> built = new TreeMap<>();
@@ -190,13 +230,13 @@ final class OptionStateImpl implements OptionState {
         built.put(entry.getKey(), entry.getValue().build());
       }
       // generate 'flattened' latest element
-      return new VersionedImpl(built, built.lastKey(), VersionedImpl.flattened(built, built.lastKey()));
+      return new VersionedImpl(this.schema, built, built.lastKey(), VersionedImpl.flattened(this.schema, built, built.lastKey()));
     }
 
     @Override
     public @NotNull VersionedBuilder version(final int version, final @NotNull Consumer<Builder> versionBuilder) {
       requireNonNull(versionBuilder, "versionBuilder")
-        .accept(this.builders.computeIfAbsent(version, $ -> new OptionStateImpl.BuilderImpl()));
+        .accept(this.builders.computeIfAbsent(version, $ -> new OptionStateImpl.BuilderImpl(this.schema)));
       return this;
     }
   }
