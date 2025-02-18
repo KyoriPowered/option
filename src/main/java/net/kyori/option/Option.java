@@ -1,7 +1,7 @@
 /*
  * This file is part of option, licensed under the MIT License.
  *
- * Copyright (c) 2023 KyoriPowered
+ * Copyright (c) 2023-2025 KyoriPowered
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,9 +47,11 @@ public interface Option<V> {
    * @param defaultValue the default value
    * @return the flag instance
    * @since 1.0.0
+   * @deprecated For removal since 1.1.0, create new options within an {@link OptionSchema} instead
    */
+  @Deprecated
   static Option<Boolean> booleanOption(final String id, final boolean defaultValue) {
-    return OptionImpl.option(id, Boolean.class, defaultValue);
+    return OptionSchema.globalSchema().booleanOption(id, defaultValue);
   }
 
   /**
@@ -63,9 +65,11 @@ public interface Option<V> {
    * @param <E> the enum type
    * @return the flag instance
    * @since 1.0.0
+   * @deprecated For removal since 1.1.0, create new options within an {@link OptionSchema} instead
    */
+  @Deprecated
   static <E extends Enum<E>> Option<E> enumOption(final String id, final Class<E> enumClazz, final E defaultValue) {
-    return OptionImpl.option(id, enumClazz, defaultValue);
+    return OptionSchema.globalSchema().enumOption(id, enumClazz, defaultValue);
   }
 
   /**
