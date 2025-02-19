@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
  */
 @ApiStatus.NonExtendable
 public interface Option<V> {
-
   /**
    * Create an option with a boolean value type.
    *

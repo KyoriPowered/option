@@ -31,19 +31,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class ValueSources {
-  static final ValueSource ENVIRONMENT = new EnvironmentVariables("");
-  static final ValueSource SYSTEM_PROPERTIES = new SystemProperties("");
+  static final ValueSource ENVIRONMENT = new EnvironmentVariable("");
+  static final ValueSource SYSTEM_PROPERTIES = new SystemProperty("");
 
   private ValueSources() {
   }
 
-  static final class EnvironmentVariables implements ValueSource {
+  static final class EnvironmentVariable implements ValueSource {
     private static final Pattern ENVIRONMENT_SUBST_PATTERN = Pattern.compile("[:\\-/]");
     private static final String ENVIRONMENT_VAR_SEPARATOR = "_";
 
     private final String prefix;
 
-    EnvironmentVariables(final String prefix) {
+    EnvironmentVariable(final String prefix) {
       this.prefix = prefix.isEmpty() ? "" : prefix.toUpperCase(Locale.ROOT) + ENVIRONMENT_VAR_SEPARATOR;
     }
 
@@ -66,13 +66,13 @@ final class ValueSources {
     }
   }
 
-  static final class SystemProperties implements ValueSource {
+  static final class SystemProperty implements ValueSource {
     private static final Pattern SYSTEM_PROP_SUBST_PATTERN = Pattern.compile("[:/]");
     private static final String SYSTEM_PROPERTY_SEPARATOR = ".";
 
     private final String prefix;
 
-    SystemProperties(final String prefix) {
+    SystemProperty(final String prefix) {
       this.prefix = prefix.isEmpty() ? "" : prefix + SYSTEM_PROPERTY_SEPARATOR;
     }
 

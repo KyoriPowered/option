@@ -59,7 +59,7 @@ class ValueSourceTest {
 
   @Test
   void testReadSystemPropertiesNoPrefix() {
-    final ValueSource systemProperties = ValueSource.systemProperty("");
+    final ValueSource systemProperties = ValueSource.systemProperty();
     assertNull(systemProperties.value(C));
     assertNull(systemProperties.value(C_D));
 

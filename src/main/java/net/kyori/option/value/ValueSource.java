@@ -39,13 +39,37 @@ public interface ValueSource {
    *
    * <p>Any of the characters {@code :}, {@code /}, and {@code -} will be replaced with {@code _}.</p>
    *
+   * @return an environment variable-backed value source with no prefix
+   * @since 1.1.0
+   */
+  static @NotNull ValueSource environmentVariable() {
+    return environmentVariable("");
+  }
+
+  /**
+   * A value source that will extract option values from environment variables.
+   *
+   * <p>Any of the characters {@code :}, {@code /}, and {@code -} will be replaced with {@code _}.</p>
+   *
    * @param prefix the prefix for environment lookup, which will be prepended to keys followed by a {@code _},
    *               or the empty string for no prefix
    * @return an environment variable-backed value source
    * @since 1.1.0
    */
   static @NotNull ValueSource environmentVariable(final @NotNull String prefix) {
-    return new ValueSources.EnvironmentVariables(prefix);
+    return new ValueSources.EnvironmentVariable(prefix);
+  }
+
+  /**
+   * A value source that will extract option values from system properties.
+   *
+   * <p>Any of the characters {@code :} and {@code /} will be replaced with {@code .}.</p>
+   *
+   * @return a system property-backed value source with no prefix
+   * @since 1.1.0
+   */
+  static @NotNull ValueSource systemProperty() {
+    return systemProperty("");
   }
 
   /**
@@ -59,7 +83,7 @@ public interface ValueSource {
    * @since 1.1.0
    */
   static @NotNull ValueSource systemProperty(final @NotNull String prefix) {
-    return new ValueSources.SystemProperties(prefix);
+    return new ValueSources.SystemProperty(prefix);
   }
 
   /**
