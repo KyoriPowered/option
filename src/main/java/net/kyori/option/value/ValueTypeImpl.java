@@ -26,18 +26,17 @@ package net.kyori.option.value;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 abstract class ValueTypeImpl<T> implements ValueType<T> {
   private final Class<T> type;
 
-  ValueTypeImpl(final @NotNull Class<T> type) {
+  ValueTypeImpl(final Class<T> type) {
     this.type = type;
   }
 
   @Override
-  public @NotNull Class<T> type() {
+  public Class<T> type() {
     return this.type;
   }
 
@@ -51,13 +50,13 @@ abstract class ValueTypeImpl<T> implements ValueType<T> {
 
     static ValueType<String> STRING = new ValueTypeImpl<String>(String.class) {
       @Override
-      public @NotNull String parse(final @NotNull String plainValue) throws IllegalArgumentException {
+      public String parse(final String plainValue) throws IllegalArgumentException {
         return plainValue;
       }
     };
     static ValueType<Boolean> BOOLEAN = new ValueTypeImpl<Boolean>(Boolean.class) {
       @Override
-      public @NotNull Boolean parse(final @NotNull String plainValue) throws IllegalArgumentException {
+      public Boolean parse(final String plainValue) throws IllegalArgumentException {
         if (plainValue.equalsIgnoreCase("true")) {
           return Boolean.TRUE;
         } else if (plainValue.equalsIgnoreCase("false")) {
@@ -69,7 +68,7 @@ abstract class ValueTypeImpl<T> implements ValueType<T> {
     };
     static ValueType<Integer> INT = new ValueTypeImpl<Integer>(Integer.class) {
       @Override
-      public @NotNull Integer parse(final @NotNull String plainValue) throws IllegalArgumentException {
+      public Integer parse(final String plainValue) throws IllegalArgumentException {
         try {
           return Integer.decode(plainValue);
         } catch (final NumberFormatException ex) {
@@ -79,7 +78,7 @@ abstract class ValueTypeImpl<T> implements ValueType<T> {
     };
     static ValueType<Double> DOUBLE = new ValueTypeImpl<Double>(Double.class) {
       @Override
-      public @NotNull Double parse(final @NotNull String plainValue) throws IllegalArgumentException {
+      public Double parse(final String plainValue) throws IllegalArgumentException {
         try {
           return Double.parseDouble(plainValue);
         } catch (final NumberFormatException ex) {
@@ -92,7 +91,7 @@ abstract class ValueTypeImpl<T> implements ValueType<T> {
   static final class EnumType<E extends Enum<E>> extends ValueTypeImpl<E> {
     private final Map<String, E> values = new HashMap<>();
 
-    EnumType(final @NotNull Class<E> type) {
+    EnumType(final Class<E> type) {
       super(type);
       for (final E entry : type.getEnumConstants()) {
         this.values.put(entry.name().toLowerCase(Locale.ROOT), entry);
@@ -100,7 +99,7 @@ abstract class ValueTypeImpl<T> implements ValueType<T> {
     }
 
     @Override
-    public @NotNull E parse(final @NotNull String plainValue) throws IllegalArgumentException {
+    public E parse(final String plainValue) throws IllegalArgumentException {
       final E result = this.values.get(plainValue.toLowerCase(Locale.ROOT));
       if (result == null) {
         throw doNotKnowHowToTurn(plainValue, this.type(), null);

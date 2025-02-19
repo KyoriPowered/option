@@ -25,8 +25,7 @@ package net.kyori.option;
 
 import net.kyori.option.value.ValueType;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A representation of a configurable option.
@@ -80,7 +79,7 @@ public interface Option<V> {
    * @return the flag id
    * @since 1.0.0
    */
-  @NotNull String id();
+  String id();
 
   /**
    * Get the type of the option value.
@@ -90,7 +89,7 @@ public interface Option<V> {
    * @deprecated for removal since 1.1.0, use {@link #valueType()} instead
    */
   @Deprecated
-  default @NotNull Class<V> type() {
+  default Class<V> type() {
     return this.valueType().type();
   }
 
@@ -100,7 +99,7 @@ public interface Option<V> {
    * @return the value type
    * @since 1.0.0
    */
-  @NotNull ValueType<V> valueType();
+  ValueType<V> valueType();
 
   /**
    * Get a default value for the option, if any is present.

@@ -27,8 +27,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.kyori.option.Option;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 final class ValueSources {
   static final ValueSource ENVIRONMENT = new EnvironmentVariable("");
@@ -48,7 +47,7 @@ final class ValueSources {
     }
 
     @Override
-    public <T> @Nullable T value(final @NotNull Option<T> option) {
+    public <T> @Nullable T value(final Option<T> option) {
       final StringBuffer buf = new StringBuffer(option.id().length() + this.prefix.length());
       buf.append(this.prefix);
       final Matcher match = ENVIRONMENT_SUBST_PATTERN.matcher(option.id());
@@ -77,7 +76,7 @@ final class ValueSources {
     }
 
     @Override
-    public <T> @Nullable T value(final @NotNull Option<T> option) {
+    public <T> @Nullable T value(final Option<T> option) {
       final StringBuffer buf = new StringBuffer(option.id().length() + this.prefix.length());
       buf.append(this.prefix);
       final Matcher match = SYSTEM_PROP_SUBST_PATTERN.matcher(option.id());

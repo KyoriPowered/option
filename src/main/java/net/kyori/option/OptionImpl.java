@@ -25,8 +25,7 @@ package net.kyori.option;
 
 import java.util.Objects;
 import net.kyori.option.value.ValueType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 final class OptionImpl<V> implements Option<V> {
 
@@ -34,19 +33,19 @@ final class OptionImpl<V> implements Option<V> {
   private final ValueType<V> type;
   private final @Nullable V defaultValue; // excluded from equality comparisons, it does not form part of the option identity
 
-  OptionImpl(final @NotNull String id, final @NotNull ValueType<V> type, final @Nullable V defaultValue) {
+  OptionImpl(final String id, final ValueType<V> type, final @Nullable V defaultValue) {
     this.id = id;
     this.type = type;
     this.defaultValue = defaultValue;
   }
 
   @Override
-  public @NotNull String id() {
+  public String id() {
     return this.id;
   }
 
   @Override
-  public @NotNull ValueType<V> valueType() {
+  public ValueType<V> valueType() {
     return this.type;
   }
 

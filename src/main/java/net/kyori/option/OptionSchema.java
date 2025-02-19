@@ -25,8 +25,7 @@ package net.kyori.option;
 
 import java.util.Set;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -45,7 +44,7 @@ public interface OptionSchema {
    * @return the global schema
    * @since 1.1.0
    */
-  static OptionSchema.@NotNull Mutable globalSchema() {
+  static OptionSchema.Mutable globalSchema() {
     return OptionSchemaImpl.Instances.GLOBAL;
   }
 
@@ -58,7 +57,7 @@ public interface OptionSchema {
    * @return the mutable child schema
    * @since 1.1.0
    */
-  static OptionSchema.@NotNull Mutable childSchema(final @NotNull OptionSchema schema) {
+  static OptionSchema.Mutable childSchema(final OptionSchema schema) {
     final OptionSchemaImpl impl;
     if (schema instanceof OptionSchemaImpl.MutableImpl) {
       impl = (OptionSchemaImpl) ((Mutable) schema).frozenView();
@@ -76,7 +75,7 @@ public interface OptionSchema {
    * @return a mutable schema
    * @since 1.1.0
    */
-  static OptionSchema.@NotNull Mutable emptySchema() {
+  static OptionSchema.Mutable emptySchema() {
     return new OptionSchemaImpl(null).new MutableImpl();
   }
 
@@ -86,7 +85,7 @@ public interface OptionSchema {
    * @return known options
    * @since 1.1.0
    */
-  @NotNull Set<Option<?>> knownOptions();
+  Set<Option<?>> knownOptions();
 
   /**
    * Return whether the provided option is known within this scheam.
@@ -95,7 +94,7 @@ public interface OptionSchema {
    * @return whether the option is known
    * @since 1.1.0
    */
-  boolean has(final @NotNull Option<?> option);
+  boolean has(final Option<?> option);
 
   /**
    * Create a builder for an unversioned option state containing only options within this schema.
@@ -103,7 +102,7 @@ public interface OptionSchema {
    * @return the builder
    * @since 1.1.0
    */
-  OptionState.@NotNull Builder stateBuilder();
+  OptionState.Builder stateBuilder();
 
   /**
    * Create a builder for a versioned option state containing only values for options within this schema.
@@ -111,7 +110,7 @@ public interface OptionSchema {
    * @return the builder
    * @since 1.1.0
    */
-  OptionState.@NotNull VersionedBuilder versionedStateBuilder();
+  OptionState.VersionedBuilder versionedStateBuilder();
 
   /**
    * Create an empty option state within this schema.
@@ -138,7 +137,7 @@ public interface OptionSchema {
      * @return the flag instance
      * @since 1.1.0
      */
-    @NotNull Option<String> stringOption(final @NotNull String id, final @Nullable String defaultValue);
+    Option<String> stringOption(final String id, final @Nullable String defaultValue);
 
     /**
      * Create an option with a boolean value type.
@@ -150,7 +149,7 @@ public interface OptionSchema {
      * @return the flag instance
      * @since 1.1.0
      */
-    @NotNull Option<Boolean> booleanOption(final @NotNull String id, final boolean defaultValue);
+    Option<Boolean> booleanOption(final String id, final boolean defaultValue);
 
     /**
      * Create an option with an integer value type.
@@ -162,7 +161,7 @@ public interface OptionSchema {
      * @return the flag instance
      * @since 1.1.0
      */
-    @NotNull Option<Integer> intOption(final @NotNull String id, final int defaultValue);
+    Option<Integer> intOption(final String id, final int defaultValue);
 
     /**
      * Create an option with a double value type.
@@ -174,7 +173,7 @@ public interface OptionSchema {
      * @return the flag instance
      * @since 1.1.0
      */
-    @NotNull Option<Double> doubleOption(final @NotNull String id, final double defaultValue);
+    Option<Double> doubleOption(final String id, final double defaultValue);
 
     /**
      * Create an option with an enum value type.
@@ -188,7 +187,7 @@ public interface OptionSchema {
      * @return the flag instance
      * @since 1.1.0
      */
-    <E extends Enum<E>> @NotNull Option<E> enumOption(final @NotNull String id, final @NotNull Class<E> enumClazz, final @Nullable E defaultValue);
+    <E extends Enum<E>> Option<E> enumOption(final String id, final Class<E> enumClazz, final @Nullable E defaultValue);
 
     /**
      * Return a view of this schema which does not allow consumers to register new options.
@@ -198,6 +197,6 @@ public interface OptionSchema {
      * @return the frozen view of this schema
      * @since 1.1.0
      */
-    @NotNull OptionSchema frozenView();
+    OptionSchema frozenView();
   }
 }

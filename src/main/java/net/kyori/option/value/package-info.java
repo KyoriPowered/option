@@ -3,4 +3,5 @@
  *
  * @since 1.1.0
  */
+@org.jspecify.annotations.NullMarked
 package net.kyori.option.value;

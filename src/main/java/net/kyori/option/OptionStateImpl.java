@@ -31,8 +31,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import net.kyori.option.value.ValueSource;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -46,17 +45,17 @@ final class OptionStateImpl implements OptionState {
   }
 
   @Override
-  public @NotNull OptionSchema schema() {
+  public OptionSchema schema() {
     return this.schema;
   }
 
   @Override
-  public boolean has(final @NotNull Option<?> option) {
+  public boolean has(final Option<?> option) {
     return this.values.containsKey(requireNonNull(option, "flag"));
   }
 
   @Override
-  public <V> V value(final @NotNull Option<V> option) {
+  public <V> @Nullable V value(final Option<V> option) {
     final V value = option.valueType().type().cast(this.values.get(requireNonNull(option, "flag")));
     return value == null ? option.defaultValue() : value;
   }
@@ -95,27 +94,27 @@ final class OptionStateImpl implements OptionState {
     }
 
     @Override
-    public @NotNull OptionSchema schema() {
+    public OptionSchema schema() {
       return this.schema;
     }
 
     @Override
-    public boolean has(final @NotNull Option<?> option) {
+    public boolean has(final Option<?> option) {
       return this.filtered.has(option);
     }
 
     @Override
-    public <V> V value(final @NotNull Option<V> option) {
+    public <V> @Nullable V value(final Option<V> option) {
       return this.filtered.value(option);
     }
 
     @Override
-    public @NotNull Map<Integer, OptionState> childStates() {
+    public Map<Integer, OptionState> childStates() {
       return Collections.unmodifiableSortedMap(this.sets.headMap(this.targetVersion + 1));
     }
 
     @Override
-    public @NotNull Versioned at(final int version) {
+    public Versioned at(final int version) {
       return new VersionedImpl(this.schema, this.sets, version, flattened(this.schema, this.sets, version));
     }
 
@@ -170,14 +169,14 @@ final class OptionStateImpl implements OptionState {
     }
 
     @Override
-    public @NotNull OptionState build() {
+    public OptionState build() {
       if (this.values.isEmpty()) return this.schema.emptyState();
 
       return new OptionStateImpl(this.schema, this.values);
     }
 
     @Override
-    public <V> @NotNull Builder value(final @NotNull Option<V> option, final @NotNull V value) {
+    public <V> Builder value(final Option<V> option, final V value) {
       if (!this.schema.has(option)) {
         throw new IllegalStateException("Option '" + option.id() + "' was not present in active schema");
       }
@@ -200,7 +199,7 @@ final class OptionStateImpl implements OptionState {
     }
 
     @Override
-    public @NotNull Builder values(final @NotNull OptionState existing) {
+    public Builder values(final OptionState existing) {
       if (existing instanceof OptionStateImpl) {
         this.putAll(((OptionStateImpl) existing).values);
       } else if (existing instanceof VersionedImpl) {
@@ -212,7 +211,7 @@ final class OptionStateImpl implements OptionState {
     }
 
     @Override
-    public @NotNull Builder values(final @NotNull ValueSource source) {
+    public Builder values(final ValueSource source) {
       for (final Option<?> opt : this.schema.knownOptions()) {
         final Object value = source.value(opt);
         if (value != null) {
@@ -228,12 +227,12 @@ final class OptionStateImpl implements OptionState {
     private final OptionSchema schema;
     private final Map<Integer, OptionStateImpl.BuilderImpl> builders = new TreeMap<>();
 
-    VersionedBuilderImpl(final @NotNull OptionSchema schema) {
+    VersionedBuilderImpl(final OptionSchema schema) {
       this.schema = schema;
     }
 
     @Override
-    public OptionState.@NotNull Versioned build() {
+    public OptionState.Versioned build() {
       if (this.builders.isEmpty()) {
         return new VersionedImpl(this.schema, Collections.emptySortedMap(), 0, this.schema.emptyState());
       }
@@ -247,7 +246,7 @@ final class OptionStateImpl implements OptionState {
     }
 
     @Override
-    public @NotNull VersionedBuilder version(final int version, final @NotNull Consumer<Builder> versionBuilder) {
+    public VersionedBuilder version(final int version, final Consumer<Builder> versionBuilder) {
       requireNonNull(versionBuilder, "versionBuilder")
         .accept(this.builders.computeIfAbsent(version, $ -> new OptionStateImpl.BuilderImpl(this.schema)));
       return this;
