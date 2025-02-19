@@ -29,6 +29,7 @@ import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import net.kyori.option.value.ValueType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +84,7 @@ final class OptionSchemaImpl implements OptionSchema {
   }
 
   final class MutableImpl implements OptionSchema.Mutable {
-    <T> Option<T> register(final String id, final Class<T> type, final @Nullable T defaultValue) {
+    <T> Option<T> register(final String id, final ValueType<T> type, final @Nullable T defaultValue) {
       final Option<T> ret = new OptionImpl<>(
         requireNonNull(id, "id"),
         requireNonNull(type, "type"),
@@ -99,27 +100,27 @@ final class OptionSchemaImpl implements OptionSchema {
 
     @Override
     public @NotNull Option<String> stringOption(final @NotNull String id, final @Nullable String defaultValue) {
-      return this.register(id, String.class, defaultValue);
+      return this.register(id, ValueType.stringType(), defaultValue);
     }
 
     @Override
     public @NotNull Option<Boolean> booleanOption(final @NotNull String id, final boolean defaultValue) {
-      return this.register(id, Boolean.class, defaultValue);
+      return this.register(id, ValueType.booleanType(), defaultValue);
     }
 
     @Override
     public @NotNull Option<Integer> intOption(final @NotNull String id, final int defaultValue) {
-      return this.register(id, Integer.class, defaultValue);
+      return this.register(id, ValueType.integerType(), defaultValue);
     }
 
     @Override
     public @NotNull Option<Double> doubleOption(final @NotNull String id, final double defaultValue) {
-      return this.register(id, Double.class, defaultValue);
+      return this.register(id, ValueType.doubleType(), defaultValue);
     }
 
     @Override
     public @NotNull <E extends Enum<E>> Option<E> enumOption(final @NotNull String id, final @NotNull Class<E> enumClazz, final @Nullable E defaultValue) {
-      return this.register(id, enumClazz, defaultValue);
+      return this.register(id, ValueType.enumType(enumClazz), defaultValue);
     }
 
     @Override

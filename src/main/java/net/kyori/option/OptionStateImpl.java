@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import net.kyori.option.value.ValueSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +57,7 @@ final class OptionStateImpl implements OptionState {
 
   @Override
   public <V> V value(final @NotNull Option<V> option) {
-    final V value = option.type().cast(this.values.get(requireNonNull(option, "flag")));
+    final V value = option.valueType().type().cast(this.values.get(requireNonNull(option, "flag")));
     return value == null ? option.defaultValue() : value;
   }
 
@@ -207,6 +208,18 @@ final class OptionStateImpl implements OptionState {
       } else {
         throw new IllegalArgumentException("existing set " + existing + " is of an unknown implementation type");
       }
+      return this;
+    }
+
+    @Override
+    public @NotNull Builder values(final @NotNull ValueSource source) {
+      for (final Option<?> opt : this.schema.knownOptions()) {
+        final Object value = source.value(opt);
+        if (value != null) {
+          this.values.put(opt, value);
+        }
+      }
+
       return this;
     }
   }

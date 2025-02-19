@@ -23,6 +23,7 @@
  */
 package net.kyori.option;
 
+import net.kyori.option.value.ValueType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
  */
 @ApiStatus.NonExtendable
 public interface Option<V> {
-
   /**
    * Create an option with a boolean value type.
    *
@@ -87,8 +87,20 @@ public interface Option<V> {
    *
    * @return the value type
    * @since 1.0.0
+   * @deprecated for removal since 1.1.0, use {@link #valueType()} instead
    */
-  @NotNull Class<V> type();
+  @Deprecated
+  default @NotNull Class<V> type() {
+    return this.valueType().type();
+  }
+
+  /**
+   * Get information about the option's value type.
+   *
+   * @return the value type
+   * @since 1.0.0
+   */
+  @NotNull ValueType<V> valueType();
 
   /**
    * Get a default value for the option, if any is present.
