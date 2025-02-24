@@ -176,15 +176,16 @@ final class OptionStateImpl implements OptionState {
     }
 
     @Override
-    public <V> Builder value(final Option<V> option, final V value) {
-      if (!this.schema.has(option)) {
+    public <V> Builder value(final Option<V> option, final @Nullable V value) {
+      if (!this.schema.has(requireNonNull(option, "option"))) {
         throw new IllegalStateException("Option '" + option.id() + "' was not present in active schema");
       }
 
-      this.values.put(
-        requireNonNull(option, "flag"),
-        requireNonNull(value, "value")
-      );
+      if (value == null) {
+        this.values.remove(option);
+      } else {
+        this.values.put(option, value);
+      }
       return this;
     }
 

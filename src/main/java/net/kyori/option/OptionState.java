@@ -142,7 +142,7 @@ public interface OptionState {
      * @param <V> the value type
      * @since 1.0.0
      */
-    <V> Builder value(final Option<V> option, final V value);
+    <V> Builder value(final Option<V> option, final @Nullable V value);
 
     /**
      * Apply all values from the existing option state.
