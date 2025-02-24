@@ -24,8 +24,7 @@
 package net.kyori.option.value;
 
 import net.kyori.option.Option;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A source for external option values.
@@ -42,7 +41,7 @@ public interface ValueSource {
    * @return an environment variable-backed value source with no prefix
    * @since 1.1.0
    */
-  static @NotNull ValueSource environmentVariable() {
+  static ValueSource environmentVariable() {
     return environmentVariable("");
   }
 
@@ -56,7 +55,7 @@ public interface ValueSource {
    * @return an environment variable-backed value source
    * @since 1.1.0
    */
-  static @NotNull ValueSource environmentVariable(final @NotNull String prefix) {
+  static ValueSource environmentVariable(final String prefix) {
     return new ValueSources.EnvironmentVariable(prefix);
   }
 
@@ -68,7 +67,7 @@ public interface ValueSource {
    * @return a system property-backed value source with no prefix
    * @since 1.1.0
    */
-  static @NotNull ValueSource systemProperty() {
+  static ValueSource systemProperty() {
     return systemProperty("");
   }
 
@@ -82,7 +81,7 @@ public interface ValueSource {
    * @return a system property-backed value source
    * @since 1.1.0
    */
-  static @NotNull ValueSource systemProperty(final @NotNull String prefix) {
+  static ValueSource systemProperty(final String prefix) {
     return new ValueSources.SystemProperty(prefix);
   }
 
@@ -94,5 +93,5 @@ public interface ValueSource {
    * @param <T> the value type
    * @since 1.1.0
    */
-  <T> @Nullable T value(final @NotNull Option<T> option);
+  <T> @Nullable T value(final Option<T> option);
 }

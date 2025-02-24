@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import net.kyori.option.value.ValueSource;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Collection of feature flags.
@@ -56,7 +56,7 @@ public interface OptionState {
    * @deprecated for removal since 1.1.0, create states via {@link OptionSchema#stateBuilder()} instead
    */
   @Deprecated
-  static @NotNull Builder optionState() {
+  static Builder optionState() {
     return OptionSchema.globalSchema().stateBuilder();
   }
 
@@ -68,7 +68,7 @@ public interface OptionState {
    * @deprecated for removal since 1.1.0, create states via {@link OptionSchema#versionedStateBuilder()} instead
    */
   @Deprecated
-  static @NotNull VersionedBuilder versionedOptionState() {
+  static VersionedBuilder versionedOptionState() {
     return OptionSchema.globalSchema().versionedStateBuilder();
   }
 
@@ -78,7 +78,7 @@ public interface OptionState {
    * @return the option schema
    * @since 1.1.0
    */
-  @NotNull OptionSchema schema();
+  OptionSchema schema();
 
   /**
    * Get whether this state contains a certain option at all.
@@ -87,7 +87,7 @@ public interface OptionState {
    * @return whether the option has been touched.
    * @since 1.0.0
    */
-  boolean has(final @NotNull Option<?> option);
+  boolean has(final Option<?> option);
 
   /**
    * Get the value set for a certain option.
@@ -97,7 +97,7 @@ public interface OptionState {
    * @param <V> the value type
    * @since 1.0.0
    */
-  <V> V value(final @NotNull Option<V> option);
+  <V> @Nullable V value(final Option<V> option);
 
   /**
    * A composite option set.
@@ -114,7 +114,7 @@ public interface OptionState {
      * @return the child sets that exist
      * @since 1.0.0
      */
-    @NotNull Map<Integer, OptionState> childStates();
+    Map<Integer, OptionState> childStates();
 
     /**
      * Request a view of this option state showing only option values available at versions up to and including {@code version}.
@@ -123,7 +123,7 @@ public interface OptionState {
      * @return a limited view of this set
      * @since 1.0.0
      */
-    @NotNull Versioned at(final int version);
+    Versioned at(final int version);
   }
 
   /**
@@ -142,7 +142,7 @@ public interface OptionState {
      * @param <V> the value type
      * @since 1.0.0
      */
-    <V> @NotNull Builder value(final @NotNull Option<V> option, final @NotNull V value);
+    <V> Builder value(final Option<V> option, final V value);
 
     /**
      * Apply all values from the existing option state.
@@ -151,7 +151,7 @@ public interface OptionState {
      * @return this builder
      * @since 1.0.0
      */
-    @NotNull Builder values(final @NotNull OptionState existing);
+    Builder values(final OptionState existing);
 
     /**
      * Set a value for all options within the {@link #schema()} where a value is provided by the {@code source}.
@@ -160,7 +160,7 @@ public interface OptionState {
      * @return this builder
      * @since 1.1.0
      */
-    @NotNull Builder values(final @NotNull ValueSource source);
+    Builder values(final ValueSource source);
 
     /**
      * Create a completed option state.
@@ -168,7 +168,7 @@ public interface OptionState {
      * @return the built state
      * @since 1.0.0
      */
-    @NotNull OptionState build();
+    OptionState build();
   }
 
   /**
@@ -186,7 +186,7 @@ public interface OptionState {
      * @return this builder
      * @since 1.0.0
      */
-    @NotNull VersionedBuilder version(final int version, final @NotNull Consumer<Builder> versionBuilder);
+    VersionedBuilder version(final int version, final Consumer<Builder> versionBuilder);
 
     /**
      * Create a completed versioned option state.
@@ -194,6 +194,6 @@ public interface OptionState {
      * @return the built versioned state
      * @since 1.0.0
      */
-    @NotNull Versioned build();
+    Versioned build();
   }
 }

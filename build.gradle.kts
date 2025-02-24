@@ -10,6 +10,7 @@ plugins {
 
 dependencies {
   compileOnlyApi(libs.jetbrainsAnnotations)
+  compileOnlyApi(libs.jspecify)
   testImplementation(platform(libs.junit.bom))
   testImplementation(libs.junit.api)
   testRuntimeOnly(libs.junit.engine)

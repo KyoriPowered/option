@@ -8,6 +8,7 @@ junit = "5.11.4"
 
 [libraries]
 jetbrainsAnnotations = "org.jetbrains:annotations:26.0.2"
+jspecify = { module = "org.jspecify:jspecify", version = "1.0.0"}
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }

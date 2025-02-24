@@ -23,7 +23,6 @@
  */
 package net.kyori.option;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -173,7 +172,7 @@ class OptionConfigTest {
     assertEquals(true, versioned.value(TWO));
   }
 
-  private static @NotNull String key(final String path) {
+  private static String key(final String path) {
     return "option:test/" + path;
   }
 }

@@ -23,8 +23,6 @@
  */
 package net.kyori.option.value;
 
-import org.jetbrains.annotations.NotNull;
-
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -40,7 +38,7 @@ public interface ValueType<T> {
    * @return a value type for string values
    * @since 1.1.0
    */
-  static @NotNull ValueType<String> stringType() {
+  static ValueType<String> stringType() {
     return ValueTypeImpl.Types.STRING;
   }
 
@@ -50,7 +48,7 @@ public interface ValueType<T> {
    * @return a value type for boolean values
    * @since 1.1.0
    */
-  static @NotNull ValueType<Boolean> booleanType() {
+  static ValueType<Boolean> booleanType() {
     return ValueTypeImpl.Types.BOOLEAN;
   }
 
@@ -60,7 +58,7 @@ public interface ValueType<T> {
    * @return a value type for integer values
    * @since 1.1.0
    */
-  static @NotNull ValueType<Integer> integerType() {
+  static ValueType<Integer> integerType() {
     return ValueTypeImpl.Types.INT;
   }
 
@@ -70,7 +68,7 @@ public interface ValueType<T> {
    * @return a value type for double values
    * @since 1.1.0
    */
-  static @NotNull ValueType<Double> doubleType() {
+  static ValueType<Double> doubleType() {
     return ValueTypeImpl.Types.DOUBLE;
   }
 
@@ -82,7 +80,7 @@ public interface ValueType<T> {
    * @return a value type for enum values
    * @since 1.1.0
    */
-  static <E extends Enum<E>> @NotNull ValueType<E> enumType(final @NotNull Class<E> enumClazz) {
+  static <E extends Enum<E>> ValueType<E> enumType(final Class<E> enumClazz) {
     return new ValueTypeImpl.EnumType<>(requireNonNull(enumClazz, "enumClazz"));
   }
 
@@ -92,7 +90,7 @@ public interface ValueType<T> {
    * @return the object type of the value
    * @since 1.1.0
    */
-  @NotNull Class<T> type();
+  Class<T> type();
 
   /**
    * Extract a value of this type from a plain string.
@@ -102,5 +100,5 @@ public interface ValueType<T> {
    * @throws IllegalArgumentException if the value is not of an appropriate type
    * @since 1.1.0
    */
-  @NotNull T parse(final @NotNull String plainValue) throws IllegalArgumentException;
+  T parse(final String plainValue) throws IllegalArgumentException;
 }

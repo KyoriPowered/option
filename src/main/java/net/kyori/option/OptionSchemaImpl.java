@@ -30,8 +30,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import net.kyori.option.value.ValueType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
@@ -47,23 +46,23 @@ final class OptionSchemaImpl implements OptionSchema {
   }
 
   @Override
-  public @NotNull Set<Option<?>> knownOptions() {
+  public Set<Option<?>> knownOptions() {
     return Collections.unmodifiableSet(new HashSet<>(this.options.values()));
   }
 
   @Override
-  public boolean has(final @NotNull Option<?> option) {
+  public boolean has(final Option<?> option) {
     final Option<?> own = this.options.get(option.id());
     return own != null && own.equals(option);
   }
 
   @Override
-  public OptionState.@NotNull Builder stateBuilder() {
+  public OptionState.Builder stateBuilder() {
     return new OptionStateImpl.BuilderImpl(this);
   }
 
   @Override
-  public OptionState.@NotNull VersionedBuilder versionedStateBuilder() {
+  public OptionState.VersionedBuilder versionedStateBuilder() {
     return new OptionStateImpl.VersionedBuilderImpl(this);
   }
 
@@ -99,54 +98,54 @@ final class OptionSchemaImpl implements OptionSchema {
     }
 
     @Override
-    public @NotNull Option<String> stringOption(final @NotNull String id, final @Nullable String defaultValue) {
+    public Option<String> stringOption(final String id, final @Nullable String defaultValue) {
       return this.register(id, ValueType.stringType(), defaultValue);
     }
 
     @Override
-    public @NotNull Option<Boolean> booleanOption(final @NotNull String id, final boolean defaultValue) {
+    public Option<Boolean> booleanOption(final String id, final boolean defaultValue) {
       return this.register(id, ValueType.booleanType(), defaultValue);
     }
 
     @Override
-    public @NotNull Option<Integer> intOption(final @NotNull String id, final int defaultValue) {
+    public Option<Integer> intOption(final String id, final int defaultValue) {
       return this.register(id, ValueType.integerType(), defaultValue);
     }
 
     @Override
-    public @NotNull Option<Double> doubleOption(final @NotNull String id, final double defaultValue) {
+    public Option<Double> doubleOption(final String id, final double defaultValue) {
       return this.register(id, ValueType.doubleType(), defaultValue);
     }
 
     @Override
-    public @NotNull <E extends Enum<E>> Option<E> enumOption(final @NotNull String id, final @NotNull Class<E> enumClazz, final @Nullable E defaultValue) {
+    public <E extends Enum<E>> Option<E> enumOption(final String id, final Class<E> enumClazz, final @Nullable E defaultValue) {
       return this.register(id, ValueType.enumType(enumClazz), defaultValue);
     }
 
     @Override
-    public @NotNull OptionSchema frozenView() {
+    public OptionSchema frozenView() {
       return OptionSchemaImpl.this;
     }
 
     // base scheam methods
 
     @Override
-    public @NotNull Set<Option<?>> knownOptions() {
+    public Set<Option<?>> knownOptions() {
       return OptionSchemaImpl.this.knownOptions();
     }
 
     @Override
-    public boolean has(final @NotNull Option<?> option) {
+    public boolean has(final Option<?> option) {
       return OptionSchemaImpl.this.has(option);
     }
 
     @Override
-    public OptionState.@NotNull Builder stateBuilder() {
+    public OptionState.Builder stateBuilder() {
       return OptionSchemaImpl.this.stateBuilder();
     }
 
     @Override
-    public OptionState.@NotNull VersionedBuilder versionedStateBuilder() {
+    public OptionState.VersionedBuilder versionedStateBuilder() {
       return OptionSchemaImpl.this.versionedStateBuilder();
     }
 
